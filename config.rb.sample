@@ -1,0 +1,18 @@
+
+# apikey of the BioPortal appliance to import data from
+def bp_apikey_input
+  ''
+end
+
+# apikey of the BioPortal appliance to import data in
+def bp_apikey_output
+  ''
+end
+
+def bp_url_input
+  'http://data.bioontology.org'
+end
+
+def bp_url_output
+  'http://vm-bioportal-vincent:8080'
+end
