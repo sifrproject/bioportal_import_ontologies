@@ -1,6 +1,128 @@
 [
   {
     "acronym": "EDAM",
-    "source": "ncbo_bioportal"
+    "source": "ncbo_bioportal",
+    "group": [],
+    "hasDomain": []
+  },
+  {
+    "acronym": "GO",
+    "source": "ncbo_bioportal",
+    "group": ["RICE", "WHEAT"],
+    "hasDomain": []
+  },
+  {
+    "acronym": "PO",
+    "source": "ncbo_bioportal",
+    "group": ["RICE", "WHEAT"],
+    "hasDomain": ["Reference", "CO_100-299"]
+  },
+  {
+    "acronym": "PTO",
+    "source": "ncbo_bioportal",
+    "group": ["RICE", "WHEAT"],
+    "hasDomain": ["Reference"]
+  },
+  {
+    "acronym": "SO",
+    "source": "ncbo_bioportal",
+    "group": ["RICE", "WHEAT"],
+    "hasDomain": []
+  },
+  {
+    "acronym": "ENVO",
+    "source": "ncbo_bioportal",
+    "group": ["WHEAT"],
+    "hasDomain": []
+  },
+  {
+    "acronym": "CL",
+    "source": "ncbo_bioportal",
+    "group": ["WHEAT"],
+    "hasDomain": []
+  },
+  {
+    "acronym": "CHEBI",
+    "source": "ncbo_bioportal",
+    "group": ["WHEAT"],
+    "hasDomain": []
+  },
+  {
+    "acronym": "CDAO",
+    "source": "ncbo_bioportal",
+    "group": ["WHEAT"],
+    "hasDomain": []
+  },
+  {
+    "acronym": "PATO",
+    "source": "ncbo_bioportal",
+    "group": ["RICE", "WHEAT"],
+    "hasDomain": []
+  },
+  {
+    "acronym": "PECO",
+    "source": "ncbo_bioportal",
+    "group": ["WHEAT"],
+    "hasDomain": []
+  },
+  {
+    "acronym": "PCO",
+    "source": "ncbo_bioportal",
+    "group": ["WHEAT"],
+    "hasDomain": []
+  },
+  {
+    "acronym": "PR",
+    "source": "ncbo_bioportal",
+    "group": ["WHEAT"],
+    "hasDomain": []
+  },
+  {
+    "acronym": "SIO",
+    "source": "ncbo_bioportal",
+    "group": ["RICE", "WHEAT"],
+    "hasDomain": []
+  },
+  {
+    "acronym": "VARIO",
+    "source": "ncbo_bioportal",
+    "group": ["WHEAT"],
+    "hasDomain": []
+  },
+  {
+    "acronym": "XEO",
+    "source": "ncbo_bioportal",
+    "group": ["WHEAT"],
+    "hasDomain": []
+  },
+  {
+    "acronym": "EFO",
+    "source": "ncbo_bioportal",
+    "group": ["WHEAT"],
+    "hasDomain": []
+  },
+  {
+    "acronym": "GFVO",
+    "source": "ncbo_bioportal",
+    "group": ["RICE", "WHEAT"],
+    "hasDomain": []
+  },
+  {
+    "acronym": "SNPO",
+    "source": "ncbo_bioportal",
+    "group": ["WHEAT"],
+    "hasDomain": []
+  },
+  {
+    "acronym": "BT",
+    "source": "ncbo_bioportal",
+    "group": ["WHEAT"],
+    "hasDomain": []
+  },
+  {
+    "acronym": "NCBITAXON",
+    "source": "ncbo_bioportal",
+    "group": ["RICE", "WHEAT"],
+    "hasDomain": []
   }
 ]
