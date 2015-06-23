@@ -1,0 +1,25 @@
+[
+    {
+        "acronym": "CHEBI",
+        "source": "ncbo_bioportal",
+        "group": ["WHEAT"],
+        "hasDomain": []
+    },
+    {
+        "acronym": "CO_325",
+        "source": "cropontology",
+        "group": ["CROP"],
+        "hasDomain": ["CO_300-499"],
+        "name": "Banana Ontology",
+        "contact": [{"name": "Inge van den Bergh", "email": "i.vandenbergh@cgiar.org"}, {"name": "Elizabeth Arnaud", "email": "e.arnaud@cgiar.org"}],
+        "hasOntologyLanguage": "OBO",
+        "released": "",
+        "description": "CGIAR banana ontology.",
+        "status": "production",
+        "version": "",
+        "homepage": "http://www.cropontology.org/",
+        "documentation": "http://www.cropontology.org/ontology/CO_325",
+        "publication": "",
+        "pullLocation": "http://www.cropontology.org/obo/CO_325"
+    }
+]

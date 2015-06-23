@@ -29,8 +29,6 @@ ontologiesArray = JSON.parse(file)
 
 ontologiesArray.each do |onto|
   puts onto["acronym"]
-  ontoData = ontologyUploader.get_submission_data(onto)
-    # Get an array with a hash with infos to create the ontology and another hash with info to import the submission
-  puts ontologyUploader.create_ontology(ontoData[0])
-  puts ontologyUploader.upload_submission(ontoData[1], onto["acronym"])
+  ontologyUploader.upload_ontology(onto)
+
 end

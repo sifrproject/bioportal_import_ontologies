@@ -11,20 +11,88 @@ class OntologyUploader
     @uploadDate = Time.now.strftime("%Y-%m-%d")
   end
 
-  def get_submission_data(ontoInfo)
-    # Get the metadata for the ontology we want to upload (depend on the source)
 
-    if ontoInfo["source"] == "ncbo_bioportal"
-      resultArray = get_info_from_bioportal(ontoInfo)
+  def upload_ontology(jsonInput)
+    begin
+      # Get an array with a hash with infos to create the ontology and another hash with info to import the submission
+      # The way of retrieving infos depends on the source
+      ontoData = get_submission_data(jsonInput)
+    rescue
+      retry
+    end
+
+    # Create the ontology, raise a Net::HTTPConflict if already existing
+    begin
+      puts ontoResult = create_ontology(ontoData[0])
+    rescue err
+      puts err
+      retry
+    end until ontoResult == "Net::HTTPCreated" || ontoResult == "Net::HTTPConflict"
+
+    # Upload the submission
+    begin
+      puts subResult = upload_submission(ontoData[1], jsonInput["acronym"])
+    rescue err
+      puts err
+      retry
+    end until subResult == "Net::HTTPCreated"
+  end
+
+
+  def get_submission_data(jsonInput)
+    # Get the metadata for the ontology we want to upload (depend on the source)
+    # It returns an array with 2 hash : one to create the ontology and the other for the submission
+    if jsonInput["source"] == "ncbo_bioportal"
+      resultArray = get_info_from_bioportal(jsonInput)
+    else
+      resultArray = get_info_from_json(jsonInput)
     end
 
     return resultArray
   end
 
+
+  def get_info_from_json(jsonInput)
+    # Create the JSON used to create ontology and upload submission
+
+    getSub = "#{bp_url_input}/ontologies/#{jsonInput["acronym"]}/latest_submission?apikey=#{bp_apikey_input}"
+    hash = JSON.parse(Net::HTTP.get(URI.parse(getSub)))
+
+    ontology_hash = {
+        "acronym": jsonInput["acronym"],
+        "name": jsonInput["name"],
+        "group": jsonInput["group"],
+        "hasDomain": jsonInput["hasDomain"],
+        "administeredBy": [@user]}
+
+    if jsonInput.key?("releaseDate") && jsonInput["releaseDate"] != ""
+      releaseDate = jsonInput["releaseDate"]
+    else
+      releaseDate = @uploadDate
+    end
+
+    submission_hash = {
+        "contact": jsonInput["contact"],
+        "ontology": "#{@restUrl}/ontologies/#{jsonInput["acronym"]}",
+        "hasOntologyLanguage": jsonInput["hasOntologyLanguage"],
+        "released": releaseDate,
+        "description": jsonInput["description"],
+        "status": "production",
+        "version": jsonInput["version"],
+        "homepage": jsonInput["homepage"],
+        "documentation": jsonInput["documentation"],
+        "publication": jsonInput["publication"],
+        "pullLocation": jsonInput["pullLocation"]
+    }
+
+    return [ontology_hash, submission_hash]
+  end
+
+
   def get_info_from_bioportal(ontoInfo)
     # For NCBO it call the last submission and get all data from it, except for groups and categories
 
-    getSub = "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/latest_submission?apikey=#{bp_apikey_input}"
+    getSub = "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/latest_submission?apikey=#{bp_apikey_input}&include=all"
     hash = JSON.parse(Net::HTTP.get(URI.parse(getSub)))
 
     ontology_hash = {
@@ -46,13 +114,14 @@ class OntologyUploader
         "hasOntologyLanguage": hash["hasOntologyLanguage"],
         "released": hash["released"],
         "description": hash["description"],
-        "status": "production",
+        "status": hash["status"],
         "version": hash["version"],
         "homepage": hash["homepage"],
         "documentation": hash["documentation"],
         "publication": hash["publication"],
         "pullLocation": "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/submissions/#{hash["submissionId"]}/download?apikey=#{bp_apikey_input}"
     }
+
 
     return [ontology_hash, submission_hash]
   end
@@ -74,7 +143,7 @@ class OntologyUploader
       http.request(req)
     end
 
-    return response
+    return response.class.to_s
   end
 
 
@@ -84,17 +153,9 @@ class OntologyUploader
     uri = URI.parse(@restUrl)
     http = Net::HTTP.new(uri.host, uri.port)
 
-    puts hash["acronym"]
-
     req = Net::HTTP::Post.new("/ontologies/#{acronym}/submissions")
     req['Content-Type'] = "application/json"
     req['Authorization'] = "apikey token=#{@apikey}"
-
-    if hash.key?("releaseDate") && hash["releaseDate"] != ""
-      releaseDate = hash["releaseDate"]
-    else
-      releaseDate = @uploadDate
-    end
 
     # status: alpha, beta, production, retired
     req.body = hash.to_json
@@ -103,6 +164,6 @@ class OntologyUploader
       http.request(req)
     end
 
-    return response
+    return response.class.to_s
   end
 end

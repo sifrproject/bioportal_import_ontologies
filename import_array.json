@@ -42,12 +42,6 @@
     "hasDomain": []
   },
   {
-    "acronym": "CHEBI",
-    "source": "ncbo_bioportal",
-    "group": ["WHEAT"],
-    "hasDomain": []
-  },
-  {
     "acronym": "CDAO",
     "source": "ncbo_bioportal",
     "group": ["WHEAT"],
