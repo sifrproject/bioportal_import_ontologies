@@ -11,13 +11,13 @@ class OntologyUploader
     @uploadDate = Time.now.strftime("%Y-%m-%d")
   end
 
-
   def upload_ontology(jsonInput)
     begin
       # Get an array with a hash with infos to create the ontology and another hash with info to import the submission
       # The way of retrieving infos depends on the source
       ontoData = get_submission_data(jsonInput)
-    rescue
+    rescue StandardError => err
+      puts err
       retry
     end
 
@@ -32,7 +32,7 @@ class OntologyUploader
     # Upload the submission
     begin
       puts subResult = upload_submission(ontoData[1], jsonInput["acronym"])
-    rescue err
+    rescue StandardError => err
       puts err
       retry
     end until subResult == "Net::HTTPCreated"
@@ -91,41 +91,91 @@ class OntologyUploader
 
   def get_info_from_bioportal(ontoInfo)
     # For NCBO it call the last submission and get all data from it, except for groups and categories
-
     getSub = "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/latest_submission?apikey=#{bp_apikey_input}&include=all"
     hash = JSON.parse(Net::HTTP.get(URI.parse(getSub)))
 
-    ontology_hash = {
-        "acronym": ontoInfo["acronym"],
-        "name": hash["ontology"]["name"],
-        "group": ontoInfo["group"],
-        "hasDomain": ontoInfo["hasDomain"],
-        "administeredBy": [@user]}
+    if hash["submissionStatus"].include? "ERROR_RDF"
+      # Check if there is an ERROR_RDF in the submission and get infos from previous submission if yes
+      subId = hash["submissionId"].to_i
+      subId = subId - 1
+      uploadArray = get_info_from_sub(ontoInfo, subId)
+    else
+      ontology_hash = {
+          "acronym": ontoInfo["acronym"],
+          "name": hash["ontology"]["name"],
+          "group": ontoInfo["group"],
+          "hasDomain": ontoInfo["hasDomain"],
+          "administeredBy": [@user]}
 
-    # Get the contacts for the submission
-    contacts = []
-    hash["contact"].each do |contact|
-      contacts.push({"name": contact["name"], "email": contact["email"]})
+      # Get the contacts for the submission
+      contacts = []
+      hash["contact"].each do |contact|
+        contacts.push({"name": contact["name"], "email": contact["email"]})
+      end
+
+      submission_hash = {
+          "contact": contacts,
+          "ontology": "#{@restUrl}/ontologies/#{ontoInfo["acronym"]}",
+          "hasOntologyLanguage": hash["hasOntologyLanguage"],
+          "released": hash["released"],
+          "description": hash["description"],
+          "status": hash["status"],
+          "version": hash["version"],
+          "homepage": hash["homepage"],
+          "documentation": hash["documentation"],
+          "publication": hash["publication"],
+          "pullLocation": "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/submissions/#{hash["submissionId"]}/download?apikey=#{bp_apikey_input}"
+      }
+
+      uploadArray = [ontology_hash, submission_hash]
     end
 
-    submission_hash = {
-        "contact": contacts,
-        "ontology": "#{@restUrl}/ontologies/#{ontoInfo["acronym"]}",
-        "hasOntologyLanguage": hash["hasOntologyLanguage"],
-        "released": hash["released"],
-        "description": hash["description"],
-        "status": hash["status"],
-        "version": hash["version"],
-        "homepage": hash["homepage"],
-        "documentation": hash["documentation"],
-        "publication": hash["publication"],
-        "pullLocation": "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/submissions/#{hash["submissionId"]}/download?apikey=#{bp_apikey_input}"
-    }
 
-
-    return [ontology_hash, submission_hash]
+    return uploadArray
   end
 
+  def get_info_from_sub(ontoInfo, subId)
+    # Get infos from previous submission if there is an ERROR_RDF in the submission
+
+    getSub = "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/submissions/#{subId}?apikey=#{bp_apikey_input}&include=all"
+    hash = JSON.parse(Net::HTTP.get(URI.parse(getSub)))
+
+    if hash["submissionStatus"].include? "ERROR_RDF"
+      subId = hash["submissionId"].to_i
+      subId = subId - 1
+      uploadArray = get_info_from_sub(ontoInfo, subId)
+    else
+      ontology_hash = {
+          "acronym": ontoInfo["acronym"],
+          "name": hash["ontology"]["name"],
+          "group": ontoInfo["group"],
+          "hasDomain": ontoInfo["hasDomain"],
+          "administeredBy": [@user]}
+
+      # Get the contacts for the submission
+      contacts = []
+      hash["contact"].each do |contact|
+        contacts.push({"name": contact["name"], "email": contact["email"]})
+      end
+
+      submission_hash = {
+          "contact": contacts,
+          "ontology": "#{@restUrl}/ontologies/#{ontoInfo["acronym"]}",
+          "hasOntologyLanguage": hash["hasOntologyLanguage"],
+          "released": hash["released"],
+          "description": hash["description"],
+          "status": hash["status"],
+          "version": hash["version"],
+          "homepage": hash["homepage"],
+          "documentation": hash["documentation"],
+          "publication": hash["publication"],
+          "pullLocation": "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/submissions/#{hash["submissionId"]}/download?apikey=#{bp_apikey_input}"
+      }
+      uploadArray = [ontology_hash, submission_hash]
+    end
+
+    return uploadArray
+  end
 
   def create_ontology(hash)
     # Create a new ontology
