@@ -15,38 +15,44 @@ class OntologyUploader
     # Get the metadata for the ontology we want to upload (depend on the source)
 
     if ontoInfo["source"] == "ncbo_bioportal"
-      # For NCBO it call the last submission and get all data from it, except for groups and categories
-
-      getSub = "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/latest_submission?apikey=#{bp_apikey_input}"
-      hash = JSON.parse(Net::HTTP.get(URI.parse(getSub)))
-
-      ontology_hash = {
-          "acronym": ontoInfo["acronym"],
-          "name": hash["ontology"]["name"],
-          "group": ontoInfo["group"],
-          "hasDomain": ontoInfo["hasDomain"],
-          "administeredBy": [@user]}
-
-      # Get the contacts for the submission
-      contacts = []
-      hash["contact"].each do |contact|
-        contacts.push({"name": contact["name"], "email": contact["email"]})
-      end
-
-      submission_hash = {
-          "contact": contacts,
-          "ontology": "#{@restUrl}/ontologies/#{ontoInfo["acronym"]}",
-          "hasOntologyLanguage": hash["hasOntologyLanguage"],
-          "released": hash["released"],
-          "description": hash["description"],
-          "status": "production",
-          "version": hash["version"],
-          "homepage": hash["homepage"],
-          "documentation": hash["documentation"],
-          "publication": hash["publication"],
-          "pullLocation": "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/submissions/#{hash["submissionId"]}/download?apikey=#{bp_apikey_input}"
-      }
+      resultArray = get_info_from_bioportal(ontoInfo)
     end
+
+    return resultArray
+  end
+
+  def get_info_from_bioportal(ontoInfo)
+    # For NCBO it call the last submission and get all data from it, except for groups and categories
+
+    getSub = "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/latest_submission?apikey=#{bp_apikey_input}"
+    hash = JSON.parse(Net::HTTP.get(URI.parse(getSub)))
+
+    ontology_hash = {
+        "acronym": ontoInfo["acronym"],
+        "name": hash["ontology"]["name"],
+        "group": ontoInfo["group"],
+        "hasDomain": ontoInfo["hasDomain"],
+        "administeredBy": [@user]}
+
+    # Get the contacts for the submission
+    contacts = []
+    hash["contact"].each do |contact|
+      contacts.push({"name": contact["name"], "email": contact["email"]})
+    end
+
+    submission_hash = {
+        "contact": contacts,
+        "ontology": "#{@restUrl}/ontologies/#{ontoInfo["acronym"]}",
+        "hasOntologyLanguage": hash["hasOntologyLanguage"],
+        "released": hash["released"],
+        "description": hash["description"],
+        "status": "production",
+        "version": hash["version"],
+        "homepage": hash["homepage"],
+        "documentation": hash["documentation"],
+        "publication": hash["publication"],
+        "pullLocation": "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/submissions/#{hash["submissionId"]}/download?apikey=#{bp_apikey_input}"
+    }
 
     return [ontology_hash, submission_hash]
   end
@@ -89,7 +95,7 @@ class OntologyUploader
     else
       releaseDate = @uploadDate
     end
-    
+
     # status: alpha, beta, production, retired
     req.body = hash.to_json
 
