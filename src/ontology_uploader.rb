@@ -44,6 +44,8 @@ class OntologyUploader
     # It returns an array with 2 hash : one to create the ontology and the other for the submission
     if jsonInput["source"] == "ncbo_bioportal"
       resultArray = get_info_from_bioportal(jsonInput)
+    elsif jsonInput["source"] == "cropontology"
+      resultArray = get_info_from_cropontology(jsonInput)
     else
       resultArray = get_info_from_json(jsonInput)
     end
@@ -84,6 +86,43 @@ class OntologyUploader
         "publication": jsonInput["publication"],
         "pullLocation": jsonInput["pullLocation"]
     }
+
+    return [ontology_hash, submission_hash]
+  end
+
+  def get_info_from_cropontology(jsonInput)
+    # Create the JSON used to create ontology and upload submission
+
+    ontology_hash = {
+        "acronym": jsonInput["acronym"],
+        "name": jsonInput["name"],
+        "group": jsonInput["group"],
+        "hasDomain": jsonInput["hasDomain"],
+        "administeredBy": [@user]}
+
+    if jsonInput.key?("releaseDate") && jsonInput["releaseDate"] != ""
+      releaseDate = jsonInput["releaseDate"]
+    else
+      releaseDate = @uploadDate
+    end
+
+    oboFile = Net::HTTP.get(URI.parse(jsonInput["download"]))
+
+    submission_hash = {
+        "contact": jsonInput["contact"],
+        "ontology": "#{@restUrl}/ontologies/#{jsonInput["acronym"]}",
+        "hasOntologyLanguage": jsonInput["hasOntologyLanguage"],
+        "released": releaseDate,
+        "description": jsonInput["description"],
+        "status": "production",
+        "version": jsonInput["version"],
+        "homepage": jsonInput["homepage"],
+        "documentation": jsonInput["documentation"],
+        "publication": jsonInput["publication"],
+        "filePath": oboFile
+    }
+
+    puts submission_hash
 
     return [ontology_hash, submission_hash]
   end
@@ -130,7 +169,7 @@ class OntologyUploader
       uploadArray = [ontology_hash, submission_hash]
     end
 
-
+    puts uploadArray
     return uploadArray
   end
 
@@ -143,6 +182,7 @@ class OntologyUploader
     if hash["submissionStatus"].include? "ERROR_RDF"
       subId = hash["submissionId"].to_i
       subId = subId - 1
+      puts subId
       uploadArray = get_info_from_sub(ontoInfo, subId)
     else
       ontology_hash = {
