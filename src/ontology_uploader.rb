@@ -153,7 +153,7 @@ class OntologyUploader
       # Get the contacts for the submission
       contacts = []
       hash["contact"].each do |contact|
-        contacts.push({"name": contact["name"], "email": contact["email"]})
+        contacts.push({"name"=> contact["name"], "email"=> contact["email"]})
       end
 
       submission_hash = {
@@ -199,7 +199,7 @@ class OntologyUploader
       # Get the contacts for the submission
       contacts = []
       hash["contact"].each do |contact|
-        contacts.push({"name": contact["name"], "email": contact["email"]})
+        contacts.push({"name"=> contact["name"], "email"=> contact["email"]})
       end
 
       submission_hash = {
