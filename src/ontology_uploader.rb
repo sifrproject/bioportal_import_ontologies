@@ -61,11 +61,11 @@ class OntologyUploader
     hash = JSON.parse(Net::HTTP.get(URI.parse(getSub)))
 
     ontology_hash = {
-        "acronym": jsonInput["acronym"],
-        "name": jsonInput["name"],
-        "group": jsonInput["group"],
-        "hasDomain": jsonInput["hasDomain"],
-        "administeredBy": [@user]}
+        "acronym"=> jsonInput["acronym"],
+        "name"=> jsonInput["name"],
+        "group"=> jsonInput["group"],
+        "hasDomain"=> jsonInput["hasDomain"],
+        "administeredBy"=> [@user]}
 
     if jsonInput.key?("releaseDate") && jsonInput["releaseDate"] != ""
       releaseDate = jsonInput["releaseDate"]
@@ -74,17 +74,17 @@ class OntologyUploader
     end
 
     submission_hash = {
-        "contact": jsonInput["contact"],
-        "ontology": "#{@restUrl}/ontologies/#{jsonInput["acronym"]}",
-        "hasOntologyLanguage": jsonInput["hasOntologyLanguage"],
-        "released": releaseDate,
-        "description": jsonInput["description"],
-        "status": "production",
-        "version": jsonInput["version"],
-        "homepage": jsonInput["homepage"],
-        "documentation": jsonInput["documentation"],
-        "publication": jsonInput["publication"],
-        "pullLocation": jsonInput["pullLocation"]
+        "contact"=> jsonInput["contact"],
+        "ontology"=> "#{@restUrl}/ontologies/#{jsonInput["acronym"]}",
+        "hasOntologyLanguage"=> jsonInput["hasOntologyLanguage"],
+        "released"=> releaseDate,
+        "description"=> jsonInput["description"],
+        "status"=> "production",
+        "version"=> jsonInput["version"],
+        "homepage"=> jsonInput["homepage"],
+        "documentation"=> jsonInput["documentation"],
+        "publication"=> jsonInput["publication"],
+        "pullLocation"=> jsonInput["pullLocation"]
     }
 
     return [ontology_hash, submission_hash]
@@ -94,11 +94,11 @@ class OntologyUploader
     # Create the JSON used to create ontology and upload submission
 
     ontology_hash = {
-        "acronym": jsonInput["acronym"],
-        "name": jsonInput["name"],
-        "group": jsonInput["group"],
-        "hasDomain": jsonInput["hasDomain"],
-        "administeredBy": [@user]}
+        "acronym"=> jsonInput["acronym"],
+        "name"=> jsonInput["name"],
+        "group"=> jsonInput["group"],
+        "hasDomain"=> jsonInput["hasDomain"],
+        "administeredBy"=> [@user]}
 
     if jsonInput.key?("releaseDate") && jsonInput["releaseDate"] != ""
       releaseDate = jsonInput["releaseDate"]
@@ -113,17 +113,17 @@ class OntologyUploader
     }
 
     submission_hash = {
-        "contact": jsonInput["contact"],
-        "ontology": "#{@restUrl}/ontologies/#{jsonInput["acronym"]}",
-        "hasOntologyLanguage": jsonInput["hasOntologyLanguage"],
-        "released": releaseDate,
-        "description": jsonInput["description"],
-        "status": "production",
-        "version": jsonInput["version"],
-        "homepage": jsonInput["homepage"],
-        "documentation": jsonInput["documentation"],
-        "publication": jsonInput["publication"],
-        "uploadFilePath": oboFilePath
+        "contact"=> jsonInput["contact"],
+        "ontology"=> "#{@restUrl}/ontologies/#{jsonInput["acronym"]}",
+        "hasOntologyLanguage"=> jsonInput["hasOntologyLanguage"],
+        "released"=> releaseDate,
+        "description"=> jsonInput["description"],
+        "status"=> "production",
+        "version"=> jsonInput["version"],
+        "homepage"=> jsonInput["homepage"],
+        "documentation"=> jsonInput["documentation"],
+        "publication"=> jsonInput["publication"],
+        "uploadFilePath"=> oboFilePath
     }
 
     puts submission_hash
@@ -144,11 +144,11 @@ class OntologyUploader
       uploadArray = get_info_from_sub(ontoInfo, subId)
     else
       ontology_hash = {
-          "acronym": ontoInfo["acronym"],
-          "name": hash["ontology"]["name"],
-          "group": ontoInfo["group"],
-          "hasDomain": ontoInfo["hasDomain"],
-          "administeredBy": [@user]}
+          "acronym"=> ontoInfo["acronym"],
+          "name"=> hash["ontology"]["name"],
+          "group"=> ontoInfo["group"],
+          "hasDomain"=> ontoInfo["hasDomain"],
+          "administeredBy"=> [@user]}
 
       # Get the contacts for the submission
       contacts = []
@@ -157,17 +157,17 @@ class OntologyUploader
       end
 
       submission_hash = {
-          "contact": contacts,
-          "ontology": "#{@restUrl}/ontologies/#{ontoInfo["acronym"]}",
-          "hasOntologyLanguage": hash["hasOntologyLanguage"],
-          "released": hash["released"],
-          "description": hash["description"],
-          "status": hash["status"],
-          "version": hash["version"],
-          "homepage": hash["homepage"],
-          "documentation": hash["documentation"],
-          "publication": hash["publication"],
-          "pullLocation": "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/submissions/#{hash["submissionId"]}/download?apikey=#{bp_apikey_input}"
+          "contact"=> contacts,
+          "ontology"=> "#{@restUrl}/ontologies/#{ontoInfo["acronym"]}",
+          "hasOntologyLanguage"=> hash["hasOntologyLanguage"],
+          "released"=> hash["released"],
+          "description"=> hash["description"],
+          "status"=> hash["status"],
+          "version"=> hash["version"],
+          "homepage"=> hash["homepage"],
+          "documentation"=> hash["documentation"],
+          "publication"=> hash["publication"],
+          "pullLocation"=> "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/submissions/#{hash["submissionId"]}/download?apikey=#{bp_apikey_input}"
       }
 
       uploadArray = [ontology_hash, submission_hash]
@@ -190,11 +190,11 @@ class OntologyUploader
       uploadArray = get_info_from_sub(ontoInfo, subId)
     else
       ontology_hash = {
-          "acronym": ontoInfo["acronym"],
-          "name": hash["ontology"]["name"],
-          "group": ontoInfo["group"],
-          "hasDomain": ontoInfo["hasDomain"],
-          "administeredBy": [@user]}
+          "acronym"=> ontoInfo["acronym"],
+          "name"=> hash["ontology"]["name"],
+          "group"=> ontoInfo["group"],
+          "hasDomain"=> ontoInfo["hasDomain"],
+          "administeredBy"=> [@user]}
 
       # Get the contacts for the submission
       contacts = []
@@ -203,17 +203,17 @@ class OntologyUploader
       end
 
       submission_hash = {
-          "contact": contacts,
-          "ontology": "#{@restUrl}/ontologies/#{ontoInfo["acronym"]}",
-          "hasOntologyLanguage": hash["hasOntologyLanguage"],
-          "released": hash["released"],
-          "description": hash["description"],
-          "status": hash["status"],
-          "version": hash["version"],
-          "homepage": hash["homepage"],
-          "documentation": hash["documentation"],
-          "publication": hash["publication"],
-          "pullLocation": "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/submissions/#{hash["submissionId"]}/download?apikey=#{bp_apikey_input}"
+          "contact"=> contacts,
+          "ontology"=> "#{@restUrl}/ontologies/#{ontoInfo["acronym"]}",
+          "hasOntologyLanguage"=> hash["hasOntologyLanguage"],
+          "released"=> hash["released"],
+          "description"=> hash["description"],
+          "status"=> hash["status"],
+          "version"=> hash["version"],
+          "homepage"=> hash["homepage"],
+          "documentation"=> hash["documentation"],
+          "publication"=> hash["publication"],
+          "pullLocation"=> "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/submissions/#{hash["submissionId"]}/download?apikey=#{bp_apikey_input}"
       }
       uploadArray = [ontology_hash, submission_hash]
     end
