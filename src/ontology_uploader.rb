@@ -126,12 +126,10 @@ class OntologyUploader
         "uploadFilePath"=> oboFilePath
     }
 
-    puts submission_hash
-
     return [ontology_hash, submission_hash]
   end
 
-
+  
   def get_info_from_bioportal(ontoInfo)
     # For NCBO it call the last submission and get all data from it, except for groups and categories
     getSub = "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/latest_submission?apikey=#{bp_apikey_input}&include=all"
