@@ -1,20 +1,19 @@
 [
   {
-    "acronym": "CO_325",
+    "acronym": "CO_321",
     "source": "cropontology",
-    "group": [],
+    "group": ["CROP", "WHEAT"],
     "hasDomain": [],
-    "name": "Banana Ontology",
-    "contact": [{"name": "Inge van den Bergh", "email": "i.vandenbergh@cgiar.org"}, {"name": "Elizabeth Arnaud", "email": "e.arnaud@cgiar.org"}],
+    "name": "CGIAR Wheat Trait Ontology",
+    "contact": [{"name": "Rosemary Shrestha", "email": "r.shrestha2@cgiar.org"}, {"name": "Elizabeth Arnaud", "email": "e.arnaud@cgiar.org"}],
     "hasOntologyLanguage": "OBO",
-    "released": "",
-    "description": "CGIAR banana ontology.",
-    "status": "production",
-    "version": "",
+    "released": "2014-09-01",
+    "description": "CIMMYT - Wheat - September 2014",
+    "status": "beta",
+    "version": "2014",
     "homepage": "http://www.cropontology.org/",
-    "documentation": "http://www.cropontology.org/ontology/CO_325",
+    "documentation": "http://www.cropontology.org/ontology/CO_321",
     "publication": "",
-    "download": "http://www.cropontology.org/serve/AMIfv97m5aCN09_gFRWWbL0aWlidFV3pbujSArNhhu7gM2Pj1Sbd_SqoBoliGVgdfS8p-4NOIaKRHIxdzkN-TsKdBFxa_J9sIG4gGpVyKEjl6vYmeXbm_rSkjuaTmIbfc_r8D88d86cibFR_RY2IcVgR12F4U38nePYHvYjGKHs5HFftMGeo6tw"
-
+    "download": "http://www.cropontology.org/serve/AMIfv95LZkfqANx67WLKz1nPj0sKQ7LpdcHr3Y-uDlWm1vN4Y6opgXFxhuFK0vPf1mqSIYByzuNYQUADw8rX1hSlqHxCg4bSDJnDGCthZcRnO4ng_E7FKSsLlp6RR_Sog7xaguHAMs_v-FqpwVjvmYv7NOXqr3hSN2xFv9zXOacsBKnF00lo0wI"
   }
 ]

@@ -106,7 +106,11 @@ class OntologyUploader
       releaseDate = @uploadDate
     end
 
+    oboFilePath = "ontology_files/#{jsonInput["acronym"]}.obo"
     oboFile = Net::HTTP.get(URI.parse(jsonInput["download"]))
+    File.open(oboFilePath, "w") { |f|
+      f.write(oboFile)
+    }
 
     submission_hash = {
         "contact": jsonInput["contact"],
@@ -119,7 +123,7 @@ class OntologyUploader
         "homepage": jsonInput["homepage"],
         "documentation": jsonInput["documentation"],
         "publication": jsonInput["publication"],
-        "filePath": oboFile
+        "uploadFilePath": oboFilePath
     }
 
     puts submission_hash
