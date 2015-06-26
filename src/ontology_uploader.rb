@@ -106,7 +106,7 @@ class OntologyUploader
       releaseDate = @uploadDate
     end
 
-    oboFilePath = "ontology_files/#{jsonInput["acronym"]}.obo"
+    oboFilePath = "#{File.dirname(__FILE__)}/../ontology_files/#{jsonInput["acronym"]}.obo"
     oboFile = Net::HTTP.get(URI.parse(jsonInput["download"]))
     File.open(oboFilePath, "w") { |f|
       f.write(oboFile)
