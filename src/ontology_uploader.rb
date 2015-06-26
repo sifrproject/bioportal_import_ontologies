@@ -227,7 +227,7 @@ class OntologyUploader
     uri = URI.parse(@restUrl)
     http = Net::HTTP.new(uri.host, uri.port)
 
-    req = Net::HTTP::Put.new("/ontologies/#{hash[:acronym]}")
+    req = Net::HTTP::Put.new("/ontologies/#{hash["acronym"]}")
     req['Content-Type'] = "application/json"
     req['Authorization'] = "apikey token=#{@apikey}"
 
