@@ -56,6 +56,7 @@ class OntologyUploader
 
   def get_info_from_json(jsonInput)
     # Create the JSON used to create ontology and upload submission
+    # Can be used for ontologies that have no source and that are uploaded on the appliance (then you just need to give the uploadFilePath)
 
     getSub = "#{bp_url_input}/ontologies/#{jsonInput["acronym"]}/latest_submission?apikey=#{bp_apikey_input}"
     hash = JSON.parse(Net::HTTP.get(URI.parse(getSub)))
@@ -84,7 +85,7 @@ class OntologyUploader
         "homepage"=> jsonInput["homepage"],
         "documentation"=> jsonInput["documentation"],
         "publication"=> jsonInput["publication"],
-        "pullLocation"=> jsonInput["pullLocation"]
+        "uploadFilePath"=> jsonInput["uploadFilePath"]
     }
 
     return [ontology_hash, submission_hash]
