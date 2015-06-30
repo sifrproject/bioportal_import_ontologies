@@ -42,12 +42,10 @@ class OntologyUploader
   def get_submission_data(jsonInput)
     # Get the metadata for the ontology we want to upload (depend on the source : bioportal,cropontology or informations in the JSON)
     # It returns an array with 2 hash : one to create the ontology and the other for the submission
-    if jsonInput["source"] == "ncbo_bioportal"
+    if jsonInput["source"] == "bioportal"
       resultArray = get_info_from_bioportal(jsonInput)
     elsif jsonInput["source"] == "cropontology"
       resultArray = get_info_from_cropontology(jsonInput)
-    elsif jsonInput["source"] == "url"
-      resultArray = get_info_from_json(jsonInput)
     else
       resultArray = get_info_from_json(jsonInput)
     end
@@ -111,7 +109,7 @@ class OntologyUploader
   end
 
   def get_info_from_cropontology(jsonInput)
-    # Create the JSON used to create ontology and upload submission
+    # Create the JSON used to create ontology and upload submission for cropontology upload
 
     ontology_hash = {
         "acronym"=> jsonInput["acronym"],
@@ -152,6 +150,8 @@ class OntologyUploader
   
   def get_info_from_bioportal(ontoInfo)
     # For NCBO it call the last submission and get all data from it, except for groups and categories
+    # If last submission has and ERROR_RDF it calls the previous
+
     getSub = "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/latest_submission?apikey=#{bp_apikey_input}&include=all"
     hash = JSON.parse(Net::HTTP.get(URI.parse(getSub)))
 
@@ -196,7 +196,7 @@ class OntologyUploader
   end
 
   def get_info_from_sub(ontoInfo, subId)
-    # Get infos from previous submission if there is an ERROR_RDF in the submission
+    # Get infos from previous submission if there is an ERROR_RDF in the actual submission
 
     getSub = "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/submissions/#{subId}?apikey=#{bp_apikey_input}&include=all"
     hash = JSON.parse(Net::HTTP.get(URI.parse(getSub)))
@@ -237,6 +237,10 @@ class OntologyUploader
     end
 
     return uploadArray
+  end
+
+  def generate_submission_from_json()
+    
   end
 
   def create_ontology(hash)

@@ -1,18 +1,23 @@
 
-# apikey of the BioPortal appliance to import data from
-def bp_apikey_input
-  ''
-end
-
-# apikey of the BioPortal appliance to import data in
-def bp_apikey_output
-  ''
-end
-
+# apikey and API URL of the BioPortal appliance to import data from
 def bp_url_input
   'http://data.bioontology.org'
 end
 
+def bp_apikey_input
+  ''
+end
+
+
+# apikey, API URL and user of the BioPortal appliance to import data in
 def bp_url_output
-  'http://vm-bioportal-vincent:8080'
+  ''
+end
+
+def bp_apikey_output
+  ''
+end
+
+def bp_user_output
+  "admin"
 end
