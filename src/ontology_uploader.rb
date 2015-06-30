@@ -15,15 +15,17 @@ class OntologyUploader
     begin
       # Get an array with a hash with infos to create the ontology and another hash with info to import the submission
       # The way of retrieving infos depends on the source
-      ontoData = get_submission_data(jsonInput)
+      uploadHash = get_submission_data(jsonInput)
     rescue StandardError => err
       puts err
       retry
     end
 
-    # Create the ontology, raise a Net::HTTPConflict if already existing
+    puts uploadHash
+
+    # Create the ontology, Net::HTTPConflict is raised if already existing
     begin
-      puts ontoResult = create_ontology(ontoData[0])
+      puts ontoResult = create_ontology(uploadHash[:ontology_hash])
     rescue err
       puts err
       retry
@@ -31,7 +33,7 @@ class OntologyUploader
 
     # Upload the submission
     begin
-      puts subResult = upload_submission(ontoData[1], jsonInput["acronym"])
+      puts subResult = upload_submission(uploadHash[:submission_hash], jsonInput["acronym"])
     rescue StandardError => err
       puts err
       retry
@@ -43,13 +45,13 @@ class OntologyUploader
     # Get the metadata for the ontology we want to upload (depend on the source : bioportal,cropontology or informations in the JSON)
     # It returns an array with 2 hash : one to create the ontology and the other for the submission
     if jsonInput["source"] == "bioportal"
-      resultArray = get_info_from_bioportal(jsonInput)
+      uploadHash = get_info_from_bioportal(jsonInput)
     elsif jsonInput["source"] == "cropontology"
-      resultArray = get_info_from_cropontology(jsonInput)
+      uploadHash = get_info_from_cropontology(jsonInput)
     else
-      resultArray = get_info_from_json(jsonInput)
+      uploadHash = get_info_from_json(jsonInput)
     end
-    return resultArray
+    return uploadHash
   end
 
 
@@ -57,72 +59,26 @@ class OntologyUploader
     # Create the JSON used to create ontology and upload submission
     # Can be used for ontologies that have no source and that are uploaded on the appliance (then you just need to give the uploadFilePath)
 
-    getSub = "#{bp_url_input}/ontologies/#{jsonInput["acronym"]}/latest_submission?apikey=#{bp_apikey_input}"
-    hash = JSON.parse(Net::HTTP.get(URI.parse(getSub)))
-
-    ontology_hash = {
-        "acronym"=> jsonInput["acronym"],
-        "name"=> jsonInput["name"],
-        "group"=> jsonInput["group"],
-        "hasDomain"=> jsonInput["hasDomain"],
-        "administeredBy"=> [@user]}
-
-    if jsonInput.key?("releaseDate") && jsonInput["releaseDate"] != ""
-      releaseDate = jsonInput["releaseDate"]
-    else
-      releaseDate = @uploadDate
-    end
+    # Generate the 2 hash needed to upload the ontology : one to create the ontology, the other to upload the submission
+    # Those hash are incomplete and still need the upload file path or URL pull location
+    uploadHash = generate_submission_from_json(jsonInput)
 
     # Check if we are pulling the ontology from an URL (using pullLocation) or from local
     if jsonInput.key?("pullLocation") && jsonInput["pullLocation"] != ""
-      submission_hash = {
-          "contact"=> jsonInput["contact"],
-          "ontology"=> "#{@restUrl}/ontologies/#{jsonInput["acronym"]}",
-          "hasOntologyLanguage"=> jsonInput["hasOntologyLanguage"],
-          "released"=> releaseDate,
-          "description"=> jsonInput["description"],
-          "status"=> "production",
-          "version"=> jsonInput["version"],
-          "homepage"=> jsonInput["homepage"],
-          "documentation"=> jsonInput["documentation"],
-          "publication"=> jsonInput["publication"],
-          "pullLocation"=> jsonInput["pullLocation"]
-      }
+      uploadHash[:submission_hash]["pullLocation"] = jsonInput["pullLocation"]
     else
-      submission_hash = {
-          "contact"=> jsonInput["contact"],
-          "ontology"=> "#{@restUrl}/ontologies/#{jsonInput["acronym"]}",
-          "hasOntologyLanguage"=> jsonInput["hasOntologyLanguage"],
-          "released"=> releaseDate,
-          "description"=> jsonInput["description"],
-          "status"=> "production",
-          "version"=> jsonInput["version"],
-          "homepage"=> jsonInput["homepage"],
-          "documentation"=> jsonInput["documentation"],
-          "publication"=> jsonInput["publication"],
-          "uploadFilePath"=> jsonInput["uploadFilePath"]
-      }
+      uploadHash[:submission_hash]["uploadFilePath"] = jsonInput["uploadFilePath"]
     end
 
-
-    return [ontology_hash, submission_hash]
+    return uploadHash
   end
 
   def get_info_from_cropontology(jsonInput)
     # Create the JSON used to create ontology and upload submission for cropontology upload
 
-    ontology_hash = {
-        "acronym"=> jsonInput["acronym"],
-        "name"=> jsonInput["name"],
-        "group"=> jsonInput["group"],
-        "hasDomain"=> jsonInput["hasDomain"],
-        "administeredBy"=> [@user]}
-
-    if jsonInput.key?("releaseDate") && jsonInput["releaseDate"] != ""
-      releaseDate = jsonInput["releaseDate"]
-    else
-      releaseDate = @uploadDate
-    end
+    # Generate the 2 hash needed to upload the ontology : one to create the ontology, the other to upload the submission
+    # Those hash are incomplete and still need the upload file path
+    uploadHash = generate_submission_from_json(jsonInput)
 
     oboFilePath = "#{File.dirname(__FILE__)}/../ontology_files/#{jsonInput["acronym"]}.obo"
     oboFile = Net::HTTP.get(URI.parse(jsonInput["download"]))
@@ -130,21 +86,9 @@ class OntologyUploader
       f.write(oboFile)
     }
 
-    submission_hash = {
-        "contact"=> jsonInput["contact"],
-        "ontology"=> "#{@restUrl}/ontologies/#{jsonInput["acronym"]}",
-        "hasOntologyLanguage"=> jsonInput["hasOntologyLanguage"],
-        "released"=> releaseDate,
-        "description"=> jsonInput["description"],
-        "status"=> "production",
-        "version"=> jsonInput["version"],
-        "homepage"=> jsonInput["homepage"],
-        "documentation"=> jsonInput["documentation"],
-        "publication"=> jsonInput["publication"],
-        "uploadFilePath"=> oboFilePath
-    }
+    uploadHash[:submission_hash]["uploadFilePath"] = oboFilePath
 
-    return [ontology_hash, submission_hash]
+    return uploadHash
   end
 
   
@@ -159,7 +103,7 @@ class OntologyUploader
       # Check if there is an ERROR_RDF in the submission and get infos from previous submission if yes
       subId = hash["submissionId"].to_i
       subId = subId - 1
-      uploadArray = get_info_from_sub(ontoInfo, subId)
+      uploadHash = get_info_from_sub(ontoInfo, subId)
     else
       ontology_hash = {
           "acronym"=> ontoInfo["acronym"],
@@ -188,11 +132,10 @@ class OntologyUploader
           "pullLocation"=> "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/submissions/#{hash["submissionId"]}/download?apikey=#{bp_apikey_input}"
       }
 
-      uploadArray = [ontology_hash, submission_hash]
+      uploadHash = {:ontology_hash=> ontology_hash, :submission_hash=> submission_hash}
     end
 
-    puts uploadArray
-    return uploadArray
+    return uploadHash
   end
 
   def get_info_from_sub(ontoInfo, subId)
@@ -205,7 +148,7 @@ class OntologyUploader
       subId = hash["submissionId"].to_i
       subId = subId - 1
       puts subId
-      uploadArray = get_info_from_sub(ontoInfo, subId)
+      uploadHash = get_info_from_sub(ontoInfo, subId)
     else
       ontology_hash = {
           "acronym"=> ontoInfo["acronym"],
@@ -233,14 +176,54 @@ class OntologyUploader
           "publication"=> hash["publication"],
           "pullLocation"=> "#{bp_url_input}/ontologies/#{ontoInfo["acronym"]}/submissions/#{hash["submissionId"]}/download?apikey=#{bp_apikey_input}"
       }
-      uploadArray = [ontology_hash, submission_hash]
+      uploadHash = {:ontology_hash=> ontology_hash, :submission_hash=> submission_hash}
     end
 
-    return uploadArray
+    return uploadHash
   end
 
-  def generate_submission_from_json()
-    
+  def generate_submission_from_json(jsonInput)
+    # Create the JSON used to create ontology and upload submission for cropontology upload
+
+    ontology_hash = {
+        "acronym"=> jsonInput["acronym"],
+        "name"=> jsonInput["name"],
+        "group"=> jsonInput["group"],
+        "hasDomain"=> jsonInput["hasDomain"],
+        "administeredBy"=> [@user]}
+
+    # Check if a release date is given, if not put the actual date
+    if jsonInput.key?("releaseDate") && jsonInput["releaseDate"] != ""
+      releaseDate = jsonInput["releaseDate"]
+    else
+      releaseDate = @uploadDate
+    end
+
+    # Check if a status is given (alpha, beta, production, retired), if not put production as status
+    if jsonInput.key?("status") && jsonInput["status"] != ""
+      status = jsonInput["status"]
+    else
+      status = "production"
+    end
+
+    submission_hash = {
+        "contact"=> jsonInput["contact"],
+        "ontology"=> "#{@restUrl}/ontologies/#{jsonInput["acronym"]}",
+        "hasOntologyLanguage"=> jsonInput["hasOntologyLanguage"],
+        "prefLabelProperty"=> jsonInput["prefLabelProperty"],
+        "altLabelProperty"=> jsonInput["altLabelProperty"],
+        "definitionProperty"=> jsonInput["definitionProperty"],
+        "authorProperty"=> jsonInput["authorProperty"],
+        "released"=> releaseDate,
+        "description"=> jsonInput["description"],
+        "status"=> status,
+        "version"=> jsonInput["version"],
+        "homepage"=> jsonInput["homepage"],
+        "documentation"=> jsonInput["documentation"],
+        "publication"=> jsonInput["publication"]
+    }
+
+    return {:ontology_hash=> ontology_hash, :submission_hash=> submission_hash}
   end
 
   def create_ontology(hash)
