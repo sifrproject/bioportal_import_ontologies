@@ -80,13 +80,21 @@ class OntologyUploader
     # Those hash are incomplete and still need the upload file path
     uploadHash = generate_submission_from_json(jsonInput)
 
-    oboFilePath = "#{File.dirname(__FILE__)}/../ontology_files/#{jsonInput["acronym"]}.obo"
+    # BioPortal don't manage to pull ontologies directly from cropontology.org
+    # so we need to download the ontology, upload it to the appliance and then upload it in bioportal
+
+    oboLocalPath = "#{File.dirname(__FILE__)}/../ontology_files/#{jsonInput["acronym"]}.obo"
     oboFile = Net::HTTP.get(URI.parse(jsonInput["download"]))
-    File.open(oboFilePath, "w") { |f|
+    File.open(oboLocalPath, "w") { |f|
       f.write(oboFile)
     }
 
-    uploadHash[:submission_hash]["uploadFilePath"] = oboFilePath
+    oboRemotePath = "/tmp/#{jsonInput["acronym"]}.obo"
+    Net::SCP.start(server_hostname, server_username, :password => server_password) do |scp|
+      scp.upload(oboLocalPath, oboRemotePath)
+    end
+
+    uploadHash[:submission_hash]["uploadFilePath"] = oboRemotePath
 
     return uploadHash
   end

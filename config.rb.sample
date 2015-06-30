@@ -21,3 +21,17 @@ end
 def bp_user_output
   "admin"
 end
+
+# Information to connect to the BioPortal appliance we want to import data in
+# It is needed to upload cropontology ontologies (because we need to upload it to the server before uploading it in bioportal)
+def server_hostname
+  ""
+end
+
+def server_username
+  "root"
+end
+
+def server_password
+  ""
+end
