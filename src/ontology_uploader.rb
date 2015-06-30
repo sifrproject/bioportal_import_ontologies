@@ -84,7 +84,7 @@ class OntologyUploader
     # so we need to download the ontology, upload it to the appliance and then upload it in bioportal
 
     oboLocalPath = "#{File.dirname(__FILE__)}/../ontology_files/#{jsonInput["acronym"]}.obo"
-    oboFile = Net::HTTP.get(URI.parse(jsonInput["download"]))
+    oboFile = Net::HTTP.get(URI.parse(jsonInput["pullLocation"]))
     File.open(oboLocalPath, "w") { |f|
       f.write(oboFile)
     }
