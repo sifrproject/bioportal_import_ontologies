@@ -1,19 +1,19 @@
 [
   {
-    "acronym": "CO_321",
-    "source": "cropontology",
-    "group": ["CROP", "WHEAT"],
+    "acronym": "GR-TAX",
+    "source": "local",
+    "group": [],
     "hasDomain": [],
-    "name": "CGIAR Wheat Trait Ontology",
-    "contact": [{"name": "Rosemary Shrestha", "email": "r.shrestha2@cgiar.org"}, {"name": "Elizabeth Arnaud", "email": "e.arnaud@cgiar.org"}],
+    "name": "Gramene Taxonomy Ontology",
+    "contact": [{"name": "Vincent Emonet", "email": "vincent.emonet@lirmm.fr"}],
     "hasOntologyLanguage": "OBO",
-    "released": "2014-09-01",
-    "description": "CIMMYT - Wheat - September 2014",
+    "released": "2013-04-26",
+    "description": "It is a representation of the taxonomy tree in the ontology format. Each term in this ontology can represent subspecies, species, genus, order, class or any rank in the classification. Primarily derived from NCBI Taxonomy, the revisions were made as and when/where required in the rankings. The rank of genome types was added by this project. This taxonomy ontology focuses on the Poaceae (Gramineae) family of plant taxonomy only.",
     "status": "beta",
-    "version": "2014",
-    "homepage": "http://www.cropontology.org/",
-    "documentation": "http://www.cropontology.org/ontology/CO_321",
+    "version": "2013",
+    "homepage": "http://archive.gramene.org/plant_ontology/ontology_browse.html#tax",
+    "documentation": "http://archive.gramene.org/plant_ontology/ontology_browse.html#tax",
     "publication": "",
-    "download": "http://www.cropontology.org/serve/AMIfv95Td8MaycB7vgjOaW07JZkiWuccE1NXRh5hwU62TONvHTQVh0PJPAUXUWp9YKTkMfh2qx36c-cisPpcpS4uWVT4AwK8gSwnsSX70PB1disnuq7h4CUixd9y-FI20qRAnxeJOY2RkoPrkS38Y6pSMQ-2cwRXKXaQCQnd5O5R_So4O1DqEEk"
+    "pullLocation": "http://palea.cgrb.oregonstate.edu/viewsvn/Poc/trunk/ontology/collaborators_ontology/gramene/taxonomy/GR_tax-ontology.obo?view=co"
   }
 ]

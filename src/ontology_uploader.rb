@@ -40,16 +40,17 @@ class OntologyUploader
 
 
   def get_submission_data(jsonInput)
-    # Get the metadata for the ontology we want to upload (depend on the source)
+    # Get the metadata for the ontology we want to upload (depend on the source : bioportal,cropontology or informations in the JSON)
     # It returns an array with 2 hash : one to create the ontology and the other for the submission
     if jsonInput["source"] == "ncbo_bioportal"
       resultArray = get_info_from_bioportal(jsonInput)
     elsif jsonInput["source"] == "cropontology"
       resultArray = get_info_from_cropontology(jsonInput)
+    elsif jsonInput["source"] == "url"
+      resultArray = get_info_from_json(jsonInput)
     else
       resultArray = get_info_from_json(jsonInput)
     end
-
     return resultArray
   end
 
@@ -74,19 +75,37 @@ class OntologyUploader
       releaseDate = @uploadDate
     end
 
-    submission_hash = {
-        "contact"=> jsonInput["contact"],
-        "ontology"=> "#{@restUrl}/ontologies/#{jsonInput["acronym"]}",
-        "hasOntologyLanguage"=> jsonInput["hasOntologyLanguage"],
-        "released"=> releaseDate,
-        "description"=> jsonInput["description"],
-        "status"=> "production",
-        "version"=> jsonInput["version"],
-        "homepage"=> jsonInput["homepage"],
-        "documentation"=> jsonInput["documentation"],
-        "publication"=> jsonInput["publication"],
-        "uploadFilePath"=> jsonInput["uploadFilePath"]
-    }
+    # Check if we are pulling the ontology from an URL (using pullLocation) or from local
+    if jsonInput.key?("pullLocation") && jsonInput["pullLocation"] != ""
+      submission_hash = {
+          "contact"=> jsonInput["contact"],
+          "ontology"=> "#{@restUrl}/ontologies/#{jsonInput["acronym"]}",
+          "hasOntologyLanguage"=> jsonInput["hasOntologyLanguage"],
+          "released"=> releaseDate,
+          "description"=> jsonInput["description"],
+          "status"=> "production",
+          "version"=> jsonInput["version"],
+          "homepage"=> jsonInput["homepage"],
+          "documentation"=> jsonInput["documentation"],
+          "publication"=> jsonInput["publication"],
+          "pullLocation"=> jsonInput["pullLocation"]
+      }
+    else
+      submission_hash = {
+          "contact"=> jsonInput["contact"],
+          "ontology"=> "#{@restUrl}/ontologies/#{jsonInput["acronym"]}",
+          "hasOntologyLanguage"=> jsonInput["hasOntologyLanguage"],
+          "released"=> releaseDate,
+          "description"=> jsonInput["description"],
+          "status"=> "production",
+          "version"=> jsonInput["version"],
+          "homepage"=> jsonInput["homepage"],
+          "documentation"=> jsonInput["documentation"],
+          "publication"=> jsonInput["publication"],
+          "uploadFilePath"=> jsonInput["uploadFilePath"]
+      }
+    end
+
 
     return [ontology_hash, submission_hash]
   end

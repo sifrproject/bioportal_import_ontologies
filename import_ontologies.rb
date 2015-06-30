@@ -30,5 +30,4 @@ ontologiesArray = JSON.parse(file)
 ontologiesArray.each do |onto|
   puts onto["acronym"]
   ontologyUploader.upload_ontology(onto)
-
 end
