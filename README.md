@@ -1,6 +1,8 @@
 # bioportal_import_ontologies
 Ruby scripts to import ontologies from differents sources (BioPortal, cropontology.org, any URL) to a BioPortal Appliance
 
+Fill the config.rb and import_array.rb files. Then run import_ontology.rb
+
 This script is using 2 files : config.rb (see config.rb.sample) and import_array.json (see import_array.json.sample)
 
 * config.rb contains informations to connect to the appliance (appliance URL, apikey, user that will upload the ontologies)

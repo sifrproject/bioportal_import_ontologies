@@ -23,7 +23,7 @@ def bp_user_output
 end
 
 # Information to connect to the BioPortal appliance we want to import data in
-# It is needed to upload cropontology ontologies (because we need to upload it to the server before uploading it in bioportal)
+# It is needed to upload local or cropontology ontologies (because we need to upload it to the server before uploading it in bioportal)
 def server_hostname
   ""
 end
