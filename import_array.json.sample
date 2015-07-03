@@ -40,5 +40,22 @@
         "documentation": "https://github.com/JervenBolleman/FALDO",
         "publication": "",
         "pullLocation": "https://raw.githubusercontent.com/JervenBolleman/FALDO/master/faldo.ttl"
+    },
+    {
+        "acronym": "CIF",
+        "source": "local",
+        "group": [],
+        "hasDomain": [],
+        "name": "Classification Internationale du Fonctionnement, du handicap et de la santé",
+        "contact": [{"name": "Stefan Darmoni", "email": "stefan.darmoni@chu-rouen.fr"}],
+        "hasOntologyLanguage": "OWL",
+        "released": "",
+        "description": "La CIF, adoptée par l'Assemblée Mondiale de la Santé en 2001, remplace la Classification Internationale des Handicaps : déficiences, incapacités, désavantages.",
+        "status": "beta",
+        "version": "",
+        "homepage": "http://www.who.int/classifications/icf/en/",
+        "documentation": "http://www.who.int/classifications/icf/icfbeginnersguide.pdf",
+        "publication": "http://apps.who.int/classifications/icfbrowser/",
+        "uploadFilePath": "/home/ontologies/CIF.owl"
     }
 ]

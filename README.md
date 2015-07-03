@@ -16,7 +16,7 @@ Example (from [bioontology.org](http://bioportal.bioontology.org))
 {
     "acronym": "EDAM",
     "source": "bioportal",
-    "group": [],
+    "group": ["NCBO"],
     "hasDomain": []
 }
 ```
@@ -74,5 +74,31 @@ You also can import an ontology from any URL using pullLocation
     "documentation": "https://github.com/JervenBolleman/FALDO",
     "publication": "",
     "pullLocation": "https://raw.githubusercontent.com/JervenBolleman/FALDO/master/faldo.ttl"
+}
+```
+
+## Import ontologies from any URL
+
+You also can import an ontology from your local machine using the "uploadFilePath" key.
+Like for the cropontology.org method, this method needs the server informations to be filled in config.rb to upload the
+  ontology file to /tmp on the server before uploading it in BioPortal.
+
+```json
+{
+    "acronym": "CIF",
+    "source": "local",
+    "group": [],
+    "hasDomain": [],
+    "name": "Classification Internationale du Fonctionnement, du handicap et de la santé",
+    "contact": [{"name": "Stefan Darmoni", "email": "stefan.darmoni@chu-rouen.fr"}],
+    "hasOntologyLanguage": "OWL",
+    "released": "",
+    "description": "La CIF, adoptée par l'Assemblée Mondiale de la Santé en 2001, remplace la Classification Internationale des Handicaps : déficiences, incapacités, désavantages.",
+    "status": "beta",
+    "version": "",
+    "homepage": "http://www.who.int/classifications/icf/en/",
+    "documentation": "http://www.who.int/classifications/icf/icfbeginnersguide.pdf",
+    "publication": "http://apps.who.int/classifications/icfbrowser/",
+    "uploadFilePath": "/home/ontologies/CIF.owl"
 }
 ```
