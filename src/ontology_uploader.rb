@@ -66,8 +66,17 @@ class OntologyUploader
     # Check if we are pulling the ontology from an URL (using pullLocation) or from local
     if jsonInput.key?("pullLocation") && jsonInput["pullLocation"] != ""
       uploadHash[:submission_hash]["pullLocation"] = jsonInput["pullLocation"]
-    else
-      uploadHash[:submission_hash]["uploadFilePath"] = jsonInput["uploadFilePath"]
+    elsif jsonInput.key?("uploadFilePath") && jsonInput["uploadFilePath"] != ""
+      # If there is not pullLocation key then it is looking for a uploadFilePath key to upload from a local file
+
+      regexGetFilename = jsonInput["uploadFilePath"].scan(/([^\/]*)$/)
+
+      ontoRemotePath = "/tmp/#{regexGetFilename[0][0]}"
+      Net::SCP.start(server_hostname, server_username, :password => server_password) do |scp|
+        scp.upload(jsonInput["uploadFilePath"], ontoRemotePath)
+      end
+
+      uploadHash[:submission_hash]["uploadFilePath"] = ontoRemotePath
     end
 
     return uploadHash
